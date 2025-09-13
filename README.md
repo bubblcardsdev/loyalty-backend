@@ -1,1 +1,1 @@
-# loyalty-admin
+# loyalty-backend
