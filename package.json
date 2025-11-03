@@ -1,0 +1,39 @@
+{
+  "name": "loyalty-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "test": "jest",
+    "lint:check": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "swagger": "npx openapi-merge-cli",
+    "dbstatus": "npx sequelize db:migrate:status",
+    "tablesup": "npx sequelize db:migrate",
+    "tablesdown": "npx sequelize db:migrate:undo:all",
+    "seedsup": "npx sequelize db:seed:all",
+    "seedsdown": "npx sequelize-cli db:seed:undo:all"
+  },
+  "author": "Xpulsar Technologies",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.13.1",
+    "body-parser": "^2.2.0",
+    "compression": "^1.8.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "eslint": "^9.39.0",
+    "express": "^5.1.0",
+    "fs": "^0.0.1-security",
+    "joi": "^18.0.1",
+    "mysql2": "^3.15.3",
+    "nodemon": "^3.1.10",
+    "sequelize": "^6.37.7",
+    "sequelize-cli": "^6.6.3",
+    "swagger": "^0.7.5",
+    "swagger-ui-express": "^5.0.1",
+    "winston": "^3.18.3"
+  }
+}
