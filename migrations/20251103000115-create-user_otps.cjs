@@ -5,7 +5,7 @@ module.exports = {
     const { INTEGER, STRING, BOOLEAN, DATE } = Sequelize;
 
     await queryInterface.createTable("user_otps", {
-      id: { type: INTEGER, primaryKey: true, autoIncrement: true },
+      id: { type: Sequelize.UUID, primaryKey: true, defaultValue: Sequelize.UUIDV4 },
       user_id: {
         type: INTEGER,
         allowNull: false,

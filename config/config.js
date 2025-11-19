@@ -17,6 +17,9 @@ const envVarsSchema = Joi.object({
   AWS_REGION: Joi.string().required(),
   AWS_ACCESS_KEY_ID: Joi.string().required(),
   AWS_SECRET_ACCESS_KEY: Joi.string().required(),
+  SALT_ROUNDS: Joi.number().default(10),
+  ADMIN_ACCESS_SECRET: Joi.string().required(),
+  ADMIN_REFRESH_SECRET: Joi.string().required(),
 })
   .unknown()
   .required();
@@ -41,6 +44,9 @@ const config = {
   awsRegion: envVars.AWS_REGION,
   awsAccessKeyId: envVars.AWS_ACCESS_KEY_ID,
   awsSecretAccessKey: envVars.AWS_SECRET_ACCESS_KEY,
+  saltRounds: envVars.SALT_ROUNDS,
+  adminAccessSecret: envVars.ADMIN_ACCESS_SECRET,
+  adminRefreshSecret: envVars.ADMIN_REFRESH_SECRET,
 };
 
 export default config;

@@ -14,15 +14,14 @@ module.exports = {
         allowNull: false,
         references: { model: "restaurants", key: "id" },
         onDelete: "CASCADE",
-        onUpdate: "CASCADE"
+        onUpdate: "CASCADE",
+        unique: true
       },
       createdAt: { type: DATE, allowNull: false, defaultValue: Sequelize.literal("NOW()") },
       updatedAt: { type: DATE, allowNull: false, defaultValue: Sequelize.literal("NOW()") }
     });
 
-    await queryInterface.addIndex("points", ["restaurant_id"], {
-      name: "points_restaurant_index"
-    });
+
   },
 
   async down(queryInterface) {

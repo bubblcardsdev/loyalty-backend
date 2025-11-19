@@ -1,8 +1,7 @@
 import app from "./app.js";
 import config from "./config/config.js";
 import adminRouter from "./routes/admin/index.admin.route.js";
-import router from "./routes/index.route.js";
-
+import router from "./routes/user/index.route.js";
 app.use("/api", router);
 app.use("/api/admin", adminRouter);
 

@@ -10,7 +10,7 @@ module.exports = (sequelize, Sequelize) => {
 
   UserOtp.init(
     {
-      id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+      id: { type: Sequelize.UUID, primaryKey: true, defaultValue: Sequelize.UUIDV4 },
       user_id: { type: Sequelize.INTEGER, allowNull: false },
       otp: { type: Sequelize.STRING, allowNull: false },
       expires_at: { type: Sequelize.DATE, allowNull: false },

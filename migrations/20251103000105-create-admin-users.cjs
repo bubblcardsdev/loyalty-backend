@@ -7,6 +7,7 @@ module.exports = {
     await queryInterface.createTable("admin_users", {
       id: { type: INTEGER, primaryKey: true, autoIncrement: true },
       name: { type: STRING, allowNull: false },
+      cardcode: { type: STRING, unique: true },
       email: { type: STRING, allowNull: false },
       restaurant_id: {
         type: INTEGER,
