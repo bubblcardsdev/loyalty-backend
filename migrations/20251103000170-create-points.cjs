@@ -6,7 +6,7 @@ module.exports = {
 
     await queryInterface.createTable("points", {
       id: { type: INTEGER, primaryKey: true, autoIncrement: true },
-      value: { type: INTEGER, allowNull: false, defaultValue: 1 },
+      points: { type: INTEGER, allowNull: false, defaultValue: 1 },
       minSpend: { type: DECIMAL(10, 2), allowNull: false },
       maxPoints: { type: INTEGER },
       restaurant_id: {

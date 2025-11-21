@@ -1,0 +1,349 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Admin Loyalty API",
+    "version": "1.0.0",
+    "description": "Admin authentication APIs (login and create admin user)."
+  },
+  "paths": {
+    "/api/admin/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Admin login (tenant scoped)",
+        "description": "Login an admin user for a specific restaurant using email and password. Requires `x-app-code` and `x-api-key` headers to identify the restaurant.",
+        "security": [
+          {
+            "RestaurantAppCode": [],
+            "RestaurantApiKey": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Admin login credentials.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminLoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Admin logged in successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminAuthSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error on email/password.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/web/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Admin login (web, no headers)",
+        "description": "Login an admin user using only email and password. Does not require restaurant headers. Useful for web admin panel where tenant resolution is based on email.",
+        "requestBody": {
+          "required": true,
+          "description": "Admin login credentials.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminLoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Admin logged in successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminAuthSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error on email/password.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/create-admin-user": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Create admin user",
+        "description": "Create a new admin user for the restaurant identified by `x-app-code` and `x-api-key` headers.",
+        "security": [
+          {
+            "RestaurantAppCode": [],
+            "RestaurantApiKey": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Admin registration payload.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminRegisterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Admin user created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or email already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AdminLoginRequest": {
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "admin@example.com"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6,
+            "example": "secret123"
+          }
+        }
+      },
+      "AdminRegisterRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "email",
+          "password"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 30,
+            "example": "Admin Owner"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "admin@example.com"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6,
+            "example": "secret123"
+          }
+        }
+      },
+      "AdminAuthSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Admin logged in successfully"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "accessToken": {
+                "type": "string",
+                "example": "admin-access-jwt-token"
+              },
+              "refreshToken": {
+                "type": "string",
+                "example": "admin-refresh-jwt-token"
+              },
+              "admin": {
+                "$ref": "#/components/schemas/AdminPayload"
+              }
+            }
+          }
+        }
+      },
+      "AdminPayload": {
+        "type": "object",
+        "description": "Admin payload embedded in the token and response.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Admin Owner"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "admin@example.com"
+          },
+          "role": {
+            "type": "string",
+            "example": "OWNER"
+          },
+          "restaurant_id": {
+            "type": "integer",
+            "example": 10
+          }
+        }
+      },
+      "SimpleSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Admin user created successfully"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "RestaurantAppCode": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-app-code",
+        "description": "Restaurant application code."
+      },
+      "RestaurantApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key",
+        "description": "Restaurant API key."
+      },
+      "AdminBearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Admin access token (not required for the above endpoints, but used elsewhere in admin APIs)."
+      }
+    }
+  }
+}

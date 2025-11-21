@@ -1,0 +1,8 @@
+{
+  "inputs": [
+    {
+      "inputFile": "./swagger/user/auth.json"
+    }
+  ],
+  "output": "./swagger/user/index.json"
+}

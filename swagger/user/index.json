@@ -1,0 +1,672 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "User Loyalty API",
+    "version": "1.0.0",
+    "description": "User authentication and restaurant info APIs for the user application."
+  },
+  "paths": {
+    "/api/getRestaurantInfo": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Get restaurant info",
+        "description": "Fetch restaurant information for the restaurant identified by the `x-app-code` and `x-api-key` headers.",
+        "security": [
+          {
+            "RestaurantAppCode": [],
+            "RestaurantApiKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Restaurant info fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetRestaurantInfoResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Restaurant not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/getOtp": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Get OTP",
+        "description": "Send an OTP to an existing user’s mobile number for login/verification.  Requires `x-app-code` and `x-api-key` headers to identify the restaurant.",
+        "security": [
+          {
+            "RestaurantAppCode": [],
+            "RestaurantApiKey": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Mobile and country code for the user.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetOtpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OTP sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error on input fields (mobile/country_code).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/verifyOtp": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Verify OTP",
+        "description": "Verify the OTP sent to the user and return a verificationId used for login. Requires `x-app-code` and `x-api-key` headers to identify the restaurant.",
+        "security": [
+          {
+            "RestaurantAppCode": [],
+            "RestaurantApiKey": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Mobile, country code, and OTP sent to the user.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyOtpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OTP verified successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyOtpSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or invalid/expired OTP.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Register user",
+        "description": "Register a new user for the identified restaurant and send an OTP to verify the mobile number.  Requires `x-app-code` and `x-api-key` headers to identify the restaurant.",
+        "security": [
+          {
+            "RestaurantAppCode": [],
+            "RestaurantApiKey": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "User registration data.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterUserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully and OTP sent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error, invalid referral code, or unique constraint error (duplicate email/mobile).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login user",
+        "description": "Login user using mobile, country code, and a previously issued verificationId (from verified OTP). Returns access and refresh tokens.  Requires `x-app-code` and `x-api-key` headers to identify the restaurant.",
+        "security": [
+          {
+            "RestaurantAppCode": [],
+            "RestaurantApiKey": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Login data including verificationId from OTP verification.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful. Tokens and user details returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error on login payload.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid verification code (verificationId not valid / not used / expired).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RegisterUserRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "email",
+          "mobile",
+          "country_code"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100,
+            "pattern": "^[a-zA-Z\\s]+$",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "johndoe@example.com"
+          },
+          "mobile": {
+            "type": "string",
+            "pattern": "^[0-9]{7,15}$",
+            "example": "9876543210"
+          },
+          "country_code": {
+            "type": "string",
+            "pattern": "^[0-9]{1,3}$",
+            "example": "91"
+          },
+          "dob": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "example": "1995-10-10"
+          },
+          "referral_code": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9]{11}$",
+            "nullable": true,
+            "example": "ABC123XYZ89"
+          }
+        }
+      },
+      "GetOtpRequest": {
+        "type": "object",
+        "required": [
+          "mobile",
+          "country_code"
+        ],
+        "properties": {
+          "mobile": {
+            "type": "string",
+            "pattern": "^[0-9]{7,15}$",
+            "example": "9876543210"
+          },
+          "country_code": {
+            "type": "string",
+            "pattern": "^[0-9]{1,3}$",
+            "example": "91"
+          }
+        }
+      },
+      "VerifyOtpRequest": {
+        "type": "object",
+        "required": [
+          "mobile",
+          "country_code",
+          "otp"
+        ],
+        "properties": {
+          "mobile": {
+            "type": "string",
+            "pattern": "^[0-9]{7,15}$",
+            "example": "9876543210"
+          },
+          "country_code": {
+            "type": "string",
+            "pattern": "^[0-9]{1,3}$",
+            "example": "91"
+          },
+          "otp": {
+            "type": "string",
+            "pattern": "^[0-9]{6}$",
+            "example": "123456"
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": [
+          "mobile",
+          "country_code",
+          "verificationId"
+        ],
+        "properties": {
+          "mobile": {
+            "type": "string",
+            "pattern": "^[0-9]{7,15}$",
+            "example": "9876543210"
+          },
+          "country_code": {
+            "type": "string",
+            "pattern": "^[0-9]{1,3}$",
+            "example": "91"
+          },
+          "verificationId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          }
+        }
+      },
+      "SimpleSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "OTP Sent successfully"
+          }
+        }
+      },
+      "VerifyOtpSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "OTP verified successfully"
+          },
+          "verificationId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          }
+        }
+      },
+      "LoginSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Login successful"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "accessToken": {
+                "type": "string",
+                "example": "access-token-jwt-here"
+              },
+              "refreshToken": {
+                "type": "string",
+                "example": "refresh-token-jwt-here"
+              },
+              "user": {
+                "$ref": "#/components/schemas/LoginUserDetails"
+              }
+            }
+          }
+        }
+      },
+      "LoginUserDetails": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "mobile": {
+            "type": "string",
+            "example": "9876543210"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "johndoe@example.com"
+          },
+          "country_code": {
+            "type": "string",
+            "example": "91"
+          },
+          "dob": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "example": "1995-10-10"
+          },
+          "cardcode": {
+            "type": "string",
+            "nullable": true,
+            "example": "CARD123456"
+          },
+          "reference_code": {
+            "type": "string",
+            "nullable": true,
+            "example": "ABC123XYZ89"
+          }
+        }
+      },
+      "GetRestaurantInfoResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Restaurant info fetched successfully"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Restaurant"
+          }
+        }
+      },
+      "Restaurant": {
+        "type": "object",
+        "description": "Restaurant details as exposed by /getRestaurantInfo.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Awesome Restaurant"
+          },
+          "mobile": {
+            "type": "string",
+            "example": "9876543210"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "contact@restaurant.com"
+          },
+          "restaurant_code": {
+            "type": "string",
+            "example": "REST001"
+          },
+          "app_name": {
+            "type": "string",
+            "example": "Loyalty App"
+          },
+          "logo_key": {
+            "type": "string",
+            "example": "logos/rest-1.png"
+          },
+          "background_theme": {
+            "type": "string",
+            "example": "#FF9900"
+          },
+          "terms_conditions": {
+            "type": "string",
+            "example": "https://example.com/terms"
+          },
+          "privacy_policy": {
+            "type": "string",
+            "example": "https://example.com/privacy"
+          },
+          "about_us": {
+            "type": "string",
+            "example": "https://example.com/about"
+          },
+          "is_active": {
+            "type": "boolean",
+            "example": true
+          },
+          "Point": {
+            "$ref": "#/components/schemas/RestaurantPoint"
+          }
+        }
+      },
+      "RestaurantPoint": {
+        "type": "object",
+        "description": "Points configuration for the restaurant.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "points": {
+            "type": "integer",
+            "example": 1
+          },
+          "minSpend": {
+            "type": "number",
+            "format": "float",
+            "example": 100
+          },
+          "maxPoints": {
+            "type": "integer",
+            "nullable": true,
+            "example": 500
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Validation error"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "RestaurantAppCode": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-app-code",
+        "description": "Restaurant application code."
+      },
+      "RestaurantApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key",
+        "description": "Restaurant API key."
+      },
+      "UserBearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "User access token. Sent in `Authorization: Bearer <token>`."
+      }
+    }
+  }
+}
